@@ -177,11 +177,11 @@ const CatalystEvaluation = () => {
               <span className="text-xs font-display text-primary">PHASE 03</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-bold mb-4 font-display">
-              Catalyst
+              RagaAI : Catalyst - 
               <span className="text-gradient"> LLM-as-Judge</span>
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Using Raga.ai's Catalyst to evaluate agent responses with LLM-as-Judge methodology. 
+              Using Catalyst by RagaAI to evaluate agent responses with LLM-as-Judge methodology. 
               Automated scoring with custom prompts and manual calibration for accuracy.
             </p>
           </div>
