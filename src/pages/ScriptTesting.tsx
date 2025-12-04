@@ -245,9 +245,9 @@ const insuranceTestCases = [
     result: "success",
   },
   {
-    query: "Cigna PPO, here's my card photo [image]",
-    expected: "I cannot process images. Please type your Cigna PPO member ID and group number directly.",
-    actual: "I'm unable to view images or attachments. Please type out your Cigna PPO member ID and group number so I can save them.",
+    query: "Book me for 10am first",
+    expected: "Scheduling was completed earlier. To finish this step, please provide your insurance provider and member ID.",
+    actual: "Now I need your insurance information: 1. Your insurance provider 2. Your insurance member ID",
     result: "fail",
   },
 ];
