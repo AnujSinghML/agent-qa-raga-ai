@@ -160,7 +160,7 @@ const JailbreakSessions = () => {
             <div className="p-6">
               <div className="grid md:grid-cols-4 gap-6 text-center">
                 <div>
-                  <div className="text-3xl font-bold text-primary font-display">12</div>
+                  <div className="text-3xl font-bold text-primary font-display">35+</div>
                   <div className="text-sm text-muted-foreground">Testers Participated</div>
                 </div>
                 <div>
@@ -168,7 +168,7 @@ const JailbreakSessions = () => {
                   <div className="text-sm text-muted-foreground">Vulnerabilities Found</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-success font-display">47</div>
+                  <div className="text-3xl font-bold text-success font-display">43</div>
                   <div className="text-sm text-muted-foreground">Issues Patched</div>
                 </div>
                 <div>
