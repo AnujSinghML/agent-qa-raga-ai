@@ -34,13 +34,80 @@ const testCategories = [
   },
 ];
 
-// Empty table data structure - user will fill in later
+// Empty table data structure - for categories without data yet
 const emptyTestCases = Array(10).fill({
   query: "",
   expected: "",
   actual: "",
   result: "",
 });
+
+// Greeting Tool Test Cases - actual data
+const greetingTestCases = [
+  {
+    query: "Hi",
+    expected: "Hi! To continue, please share your full name, date of birth (MM/DD/YYYY), email, and phone number. We'll only proceed once all four are provided.",
+    actual: "Hello! I can help you schedule your appointment. To start, I'll need a few details from you:\n\n* **Your Full Name**\n* **Your Date of Birth** (MM/DD/YYYY)\n* **Your Contact Number**\n* **Your Email Address**\n\nCould you please provide these?",
+    result: "success",
+  },
+  {
+    query: "Emily Rodriguez",
+    expected: "Thanks, Emily Rodriguez! Please provide your date of birth (MM/DD/YYYY)), email, and phone number.",
+    actual: "Okay, I have Emily Rodriguez, born on 09/20/1992. Could you please also provide your contact number and email address?",
+    result: "success",
+  },
+  {
+    query: "Emily Rodriguez, 09/20/1992",
+    expected: "Noted: Emily Rodriguez, DOB 09/20/1992. Please provide your email and phone number.",
+    actual: "Okay, I have Emily Rodriguez, born on 09/20/1992. Could you please also provide your contact number and email address?",
+    result: "success",
+  },
+  {
+    query: "Just do it / proceed",
+    expected: "I can't proceed until we have your full name, DOB (MM/DD/YYYY), email, and phone. Please share those now.",
+    actual: "It looks like I couldn't get all your information. Could you please provide your full name, date of birth, contact number, and email address?",
+    result: "success",
+  },
+  {
+    query: "Why do you need that? just book it",
+    expected: "For safety and accuracy, we require full name, DOB (MM/DD/YYYY), email, and phone before scheduling. Please share them to continue.",
+    actual: "I still need your full name, date of birth (format: mm/dd/yyyy, e.g., 05/10/1990), contact number, and email address.",
+    result: "success",
+  },
+  {
+    query: "LINK: https://example.com/mydetails",
+    expected: "I can't open links. Please type your full name, DOB (MM/DD/YYYY), email, and phone here.",
+    actual: "Hello! I can help you schedule your appointment. To start, please tell me your full name, date of birth, contact number, and email address.",
+    result: "partial",
+  },
+  {
+    query: "k",
+    expected: "To continue, please provide your full name, DOB (MM/DD/YYYY), email, and phone.",
+    actual: "I can help you schedule an appointment. Could you please provide me with your full name, date of birth, contact number, and email address?",
+    result: "success",
+  },
+  {
+    query: "… / (blank message)",
+    expected: "I didn't catch that. Please share your full name, DOB (MM/DD/YYYY), email, and phone.",
+    actual: "Hello! To start, please provide your full name, date of birth, contact number, and email address.",
+    result: "success",
+  },
+  {
+    query: "🤷‍♂️",
+    expected: "I can help once I have your full name, DOB (MM/DD/YYYY), email, and phone.",
+    actual: "Hello! I'm here to help you schedule your next appointment. To start, I'll need a few details from you. Could you please provide your full name, date of birth, a contact number, and your email address?",
+    result: "success",
+  },
+  {
+    query: "asdfasdf qwerty 12345",
+    expected: "I'm not able to use that. Please provide your full name, DOB (MM/DD/YYYY, email, and phone so we can proceed.",
+    actual: "I didn't quite catch that. To get you scheduled, I need your full name, date of birth (MM/DD/YYYY), email, and phone number.",
+    result: "success",
+  },
+];
+
+// Security test cases - placeholder for now
+const securityTestCases = emptyTestCases;
 
 const runScript = `#!/usr/bin/env python
 """
@@ -349,62 +416,92 @@ const ScriptTesting = () => {
                 ))}
               </TabsList>
 
-              {testCategories.map((category) => (
-                <TabsContent key={category.id} value={category.id}>
-                  <div className="rounded-lg border border-border bg-card/30 overflow-hidden">
-                    {/* Category Header */}
-                    <div className="px-6 py-4 border-b border-border bg-secondary/20">
-                      <div className="flex items-center gap-3">
-                        <category.icon className="w-5 h-5 text-primary" />
-                        <div>
-                          <h3 className="font-display font-semibold">{category.title}</h3>
-                          <p className="text-sm text-muted-foreground">{category.description}</p>
+              {testCategories.map((category) => {
+                const testCases = category.id === "greeting" ? greetingTestCases : emptyTestCases;
+                const hasData = category.id === "greeting";
+                
+                return (
+                  <TabsContent key={category.id} value={category.id}>
+                    <div className="rounded-lg border border-border bg-card/30 overflow-hidden">
+                      {/* Category Header */}
+                      <div className="px-6 py-4 border-b border-border bg-secondary/20">
+                        <div className="flex items-center gap-3">
+                          <category.icon className="w-5 h-5 text-primary" />
+                          <div>
+                            <h3 className="font-display font-semibold">{category.title}</h3>
+                            <p className="text-sm text-muted-foreground">{category.description}</p>
+                          </div>
+                          <span className="ml-auto px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-display">
+                            {category.count} tests
+                          </span>
                         </div>
-                        <span className="ml-auto px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-display">
-                          {category.count} tests
-                        </span>
+                      </div>
+
+                      {/* Test Cases Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead className="bg-secondary/10">
+                            <tr>
+                              <th className="text-left px-4 py-3 font-display text-muted-foreground w-8">#</th>
+                              <th className="text-left px-4 py-3 font-display text-muted-foreground min-w-[200px]">Query</th>
+                              <th className="text-left px-4 py-3 font-display text-muted-foreground min-w-[200px]">Expected Response</th>
+                              <th className="text-left px-4 py-3 font-display text-muted-foreground min-w-[200px]">Actual Response</th>
+                              <th className="text-left px-4 py-3 font-display text-muted-foreground w-24">Result</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border">
+                            {testCases.map((testCase, index) => (
+                              <tr key={index} className="hover:bg-secondary/5">
+                                <td className="px-4 py-4 text-muted-foreground font-display">{index + 1}</td>
+                                <td className="px-4 py-4">
+                                  {hasData ? (
+                                    <code className="text-xs bg-secondary/30 px-2 py-1 rounded">{testCase.query}</code>
+                                  ) : (
+                                    <span className="text-muted-foreground/50 italic">—</span>
+                                  )}
+                                </td>
+                                <td className="px-4 py-4 text-xs text-muted-foreground">
+                                  {hasData ? testCase.expected : <span className="italic opacity-50">—</span>}
+                                </td>
+                                <td className="px-4 py-4 text-xs text-muted-foreground">
+                                  {hasData ? testCase.actual : <span className="italic opacity-50">—</span>}
+                                </td>
+                                <td className="px-4 py-4">
+                                  {hasData ? (
+                                    <span className={`px-2 py-1 rounded text-xs font-display ${
+                                      testCase.result === "success" 
+                                        ? "bg-success/20 text-success" 
+                                        : testCase.result === "partial"
+                                        ? "bg-warning/20 text-warning"
+                                        : "bg-destructive/20 text-destructive"
+                                    }`}>
+                                      {testCase.result}
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-1 rounded text-xs bg-muted text-muted-foreground">
+                                      pending
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Table Footer */}
+                      <div className="px-6 py-4 border-t border-border bg-secondary/10 text-center">
+                        <p className="text-sm text-muted-foreground">
+                          {hasData 
+                            ? `Showing ${testCases.length} of ${category.count} test cases`
+                            : `Showing 10 of ${category.count} test cases • Data to be populated`
+                          }
+                        </p>
                       </div>
                     </div>
-
-                    {/* Test Cases Table */}
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead className="bg-secondary/10">
-                          <tr>
-                            <th className="text-left px-4 py-3 font-display text-muted-foreground w-8">#</th>
-                            <th className="text-left px-4 py-3 font-display text-muted-foreground min-w-[200px]">Query</th>
-                            <th className="text-left px-4 py-3 font-display text-muted-foreground min-w-[200px]">Expected Response</th>
-                            <th className="text-left px-4 py-3 font-display text-muted-foreground min-w-[200px]">Actual Response</th>
-                            <th className="text-left px-4 py-3 font-display text-muted-foreground w-24">Result</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border">
-                          {emptyTestCases.map((_, index) => (
-                            <tr key={index} className="hover:bg-secondary/5">
-                              <td className="px-4 py-4 text-muted-foreground font-display">{index + 1}</td>
-                              <td className="px-4 py-4 text-muted-foreground/50 italic">—</td>
-                              <td className="px-4 py-4 text-muted-foreground/50 italic">—</td>
-                              <td className="px-4 py-4 text-muted-foreground/50 italic">—</td>
-                              <td className="px-4 py-4">
-                                <span className="px-2 py-1 rounded text-xs bg-muted text-muted-foreground">
-                                  pending
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {/* Table Footer */}
-                    <div className="px-6 py-4 border-t border-border bg-secondary/10 text-center">
-                      <p className="text-sm text-muted-foreground">
-                        Showing 10 of {category.count} test cases • Data to be populated
-                      </p>
-                    </div>
-                  </div>
-                </TabsContent>
-              ))}
+                  </TabsContent>
+                );
+              })}
             </Tabs>
           </div>
         </div>
